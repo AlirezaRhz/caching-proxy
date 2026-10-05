@@ -1,0 +1,6 @@
+@CachingProxy_HostAddress = http://localhost:5072
+
+GET {{CachingProxy_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
