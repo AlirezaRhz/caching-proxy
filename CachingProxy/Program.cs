@@ -5,7 +5,7 @@ Option<int> portOption = new Option<int>("--port")
     Description = "The port to listen on."
 };
 
-Option<string> urlOption = new Option<string>("--url")
+Option<string> urlOption = new Option<string>("--origin")
 {
     Description = "The URL to proxy requests to."
 };
@@ -44,7 +44,7 @@ void RunProxy(int port, string url)
         app.MapOpenApi();
     }
 
-    //app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 
     app.Run($"http://localhost:{port}");
 }
