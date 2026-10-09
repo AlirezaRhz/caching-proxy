@@ -36,15 +36,18 @@ void RunProxy(int port, string url)
     // Add services to the container.
     builder.Services.AddOpenApi();
 
+    // Register a new client to access the origin uri anywhere in the app with dependency injection
+    builder.Services.AddHttpClient("origin", c => c.BaseAddress = new Uri(url));
+
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.MapOpenApi();
-    }
+    //// Configure the HTTP request pipeline.
+    //if (app.Environment.IsDevelopment())
+    //{
+    //    app.MapOpenApi();
+    //}
 
-    app.UseHttpsRedirection();
+    //app.UseHttpsRedirection();
 
     app.Run($"http://localhost:{port}");
 }
