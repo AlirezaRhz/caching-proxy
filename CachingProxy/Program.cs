@@ -1,13 +1,16 @@
+using CachingProxy.Endpoints;
 using System.CommandLine;
 
 Option<int> portOption = new Option<int>("--port")
 {
-    Description = "The port to listen on."
+    Description = "The port to listen on.",
+    Required = true
 };
 
 Option<string> urlOption = new Option<string>("--origin")
 {
-    Description = "The URL to proxy requests to."
+    Description = "The URL to proxy requests to.",
+    Required = true
 };
 
 RootCommand rootCommand = new RootCommand()
@@ -36,10 +39,17 @@ void RunProxy(int port, string url)
     // Add services to the container.
     builder.Services.AddOpenApi();
 
+    if (!url.StartsWith("https://") && !url.StartsWith("http://"))
+    {
+        url = $"https://{url}";
+    }
+
     // Register a new client to access the origin uri anywhere in the app with dependency injection
     builder.Services.AddHttpClient("origin", c => c.BaseAddress = new Uri(url));
 
     var app = builder.Build();
+
+    app.MapProxyEndpoints();
 
     //// Configure the HTTP request pipeline.
     //if (app.Environment.IsDevelopment())
