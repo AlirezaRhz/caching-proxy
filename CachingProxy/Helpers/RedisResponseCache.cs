@@ -6,9 +6,6 @@ namespace CachingProxy.Helpers
 {
     public class RedisResponseCache : IResponseCache
     {
-        public TimeSpan? AbsoluteExpireTime { get; set; } = TimeSpan.FromSeconds(60);
-        public TimeSpan? UnusedExpireTime { get; set; } = TimeSpan.FromSeconds(60);
-
         public IDistributedCache _cache { get; set; }
 
         public RedisResponseCache(IDistributedCache cache)
@@ -16,14 +13,14 @@ namespace CachingProxy.Helpers
             _cache = cache;
         }
 
-        public async Task CacheResponseAsync(string key, CachedResponse response)
+        public async Task CacheResponseAsync(string key, CachedResponse response, TimeSpan? absoluteExpireTime = null, TimeSpan? unusedExpireTime = null)
         {
-            await DistributedCacheExtensions.SetRecordAsync<CachedResponse>(_cache, key, response, AbsoluteExpireTime, UnusedExpireTime);
+            await _cache.SetRecordAsync(key, response, absoluteExpireTime, unusedExpireTime);
         }
 
         public async Task<CachedResponse?> GetCachedResponseAsync(string key)
         {
-            return await DistributedCacheExtensions.GetRecordAsync<CachedResponse?>(_cache, key);
+            return await _cache.GetRecordAsync<CachedResponse>(key);
         }
     }
 }

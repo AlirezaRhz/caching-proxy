@@ -52,7 +52,7 @@ namespace CachingProxy.Endpoints
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await cache.CacheResponseAsync(cacheKey, responseToCache);
+                    await cache.CacheResponseAsync(cacheKey, responseToCache, TimeSpan.FromSeconds(120), null);
                 }
 
                 // forward the response
