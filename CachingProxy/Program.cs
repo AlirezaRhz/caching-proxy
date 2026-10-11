@@ -1,4 +1,6 @@
 using CachingProxy.Endpoints;
+using CachingProxy.Helpers;
+using CachingProxy.Interfaces;
 using System.CommandLine;
 
 Option<int> portOption = new Option<int>("--port")
@@ -38,6 +40,15 @@ void RunProxy(int port, string url)
 
     // Add services to the container.
     builder.Services.AddOpenApi();
+
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration.GetConnectionString("redis");
+        options.InstanceName = "CachingProxy_"; // Used to not interfere with other running applications that are using Redis
+    });
+
+    // Basically : Whenever a class asks for an IResponseCache, give it a RedisResponseCache!
+    builder.Services.AddSingleton<IResponseCache, RedisResponseCache>();
 
     if (!url.StartsWith("https://") && !url.StartsWith("http://"))
     {
